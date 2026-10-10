@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>German Monano — Premium German Learning</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slate900: '#0F172A',
+                        slate800: '#1E293B',
+                        slate700: '#334155',
+                        cream: '#F8F9FA',
+                        cardBg: '#FFFFFF',
+                        terracotta: '#C86D51',
+                        terracottaDark: '#A8553B',
+                        sage: '#658864',
+                        sageLight: '#E8F0E8',
+                        warmGray: '#F1F3F5',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F4F5F7;
+            color: #1E293B;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .ios-glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .ios-card {
+            background: #FFFFFF;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+        }
+        .flip-card {
+            perspective: 1000px;
+        }
+        .flip-card-inner {
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        .flip-card-front, .flip-card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .flip-card-back {
+            transform: rotateY(180deg);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-terracotta selection:text-white">
+
+    <header class="sticky top-0 z-40 ios-glass border-b border-slate-200/60 px-4 py-3">
+        <div class="max-w-2xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-2.5">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-terracotta to-terracottaDark flex items-center text-white justify-center font-bold text-lg shadow-sm">
+                    M
+                </div>
+                <div>
+                    <h1 class="font-bold text-slate-900 text-base leading-tight">German Monano</h1>
+                    <p class="text-xs text-slate-500 font-medium flex items-center space-x-1">
+                        <span id="current-level-badge" class="px-1.5 py-0.5 rounded text-[10px] bg-sageLight text-sage font-semibold">A1 Beginner</span>
+                        <span>•</span>
+                        <span id="sync-status-text" class="text-emerald-600 flex items-center"><i class="fa-solid fa-cloud-arrow-up mr-1"></i>Synced</span>
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button onclick="openStreakModal()" class="flex items-center space-x-1.5 bg-amber-50 text-amber-700 px-3 py-1.5 rounded-full text-xs font-semibold border border-amber-200/60 transition active:scale-95">
+                    <i class="fa-solid fa-fire text-amber-500"></i>
+                    <span id="header-streak-count">5 Days</span>
+                </button>
+                <button onclick="switchTab('settings')" class="w-9 h-9 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center hover:bg-slate-200 transition active:scale-95">
+                    <i class="fa-solid fa-gear text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-2xl w-full mx-auto px-4 py-6 pb-28">
+
+        <!-- HOME VIEW -->
+        <div id="view-home" class="space-y-6 view-section">
+            <!-- Daily Learning Card Hero -->
+            <div class="ios-card rounded-2xl p-6 relative overflow-hidden bg-gradient-to-br from-white via-white to-slate-50">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-terracotta/5 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="flex justify-between items-start mb-4">
+                    <span class="px-3 py-1 bg-terracotta/10 text-terracotta text-xs font-semibold rounded-full uppercase tracking-wider">Today's 7-Min Card</span>
+                    <span class="text-xs text-slate-400 font-medium"><i class="fa-regular fa-clock mr-1"></i>7 mins</span>
+                </div>
+                <h2 id="home-lesson-title" class="text-2xl font-bold text-slate-900 mb-2">Im Café bestellen</h2>
+                <p id="home-lesson-desc" class="text-sm text-slate-600 mb-6 leading-relaxed">Master practical phrases for ordering coffee, pastries, and asking for the bill politely in Berlin cafes.</p>
+                
+                <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-8 h-8 rounded-full bg-sageLight text-sage flex items-center justify-center font-bold text-xs">
+                            <i class="fa-solid fa-mug-hot"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-semibold text-slate-800">Unit 3 • Practical A1</p>
+                            <p class="text-[11px] text-slate-500">Dialogue + Grammar + Quiz</p>
+                        </div>
+                    </div>
+                    <button onclick="startDailyLesson()" class="bg-terracotta hover:bg-terracottaDark text-white font-medium px-5 py-2.5 rounded-xl text-sm shadow-md shadow-terracotta/20 transition transform active:scale-95 flex items-center space-x-2">
+                        <span>Start Lesson</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Stats Row -->
+            <div class="grid grid-cols-3 gap-3">
+                <div class="ios-card p-4 rounded-xl text-center">
+                    <p class="text-2xl font-bold text-slate-900" id="stat-completed-lessons">12</p>
+                    <p class="text-xs text-slate-500 font-medium mt-0.5">Lessons Done</p>
+                </div>
+                <div class="ios-card p-4 rounded-xl text-center">
+                    <p class="text-2xl font-bold text-slate-900" id="stat-words-mastered">64</p>
+                    <p class="text-xs text-slate-500 font-medium mt-0.5">Vocabulary</p>
+                </div>
+                <div class="ios-card p-4 rounded-xl text-center">
+                    <p class="text-2xl font-bold text-slate-900 text-terracotta" id="stat-accuracy">88%</p>
+                    <p class="text-xs text-slate-500 font-medium mt-0.5">Quiz Accuracy</p>
+                </div>
+            </div>
+
+            <!-- Curriculum Path Preview -->
+            <div class="space-y-3">
+                <div class="flex justify-between items-center">
+                    <h3 class="font-bold text-slate-900 text-sm">Curriculum Path (A0 - A2)</h3>
+                    <button onclick="switchTab('progress')" class="text-xs font-semibold text-terracotta hover:underline">View All</button>
+                </div>
+                <div id="curriculum-list" class="space-y-2.5">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- FLASHCARDS VIEW -->
+        <div id="view-flashcards" class="space-y-6 view-section hidden">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900">Vocabulary Flashcards</h2>
+                    <p class="text-xs text-slate-500">Spaced repetition review for long-term retention.</p>
+                </div>
+                <button onclick="resetFlashcards()" class="text-xs text-terracotta font-semibold bg-terracotta/10 px-3 py-1.5 rounded-lg hover:bg-terracotta/20 transition">
+                    <i class="fa-solid fa-rotate-right mr-1"></i>Reset Stack
+                </button>
+            </div>
+
+            <!-- Flashcard Card Container -->
+            <div class="flex flex-col items-center justify-center py-4">
+                <div id="flashcard-element" class="flip-card w-full max-w-md h-80 cursor-pointer" onclick="toggleCardFlip()">
+                    <div class="flip-card-inner w-full h-full relative rounded-2xl shadow-lg border border-slate-200/80 bg-white">
+                        <!-- Front -->
+                        <div class="flip-card-front absolute inset-0 w-full h-full flex flex-col justify-between p-6 bg-gradient-to-b from-white to-slate-50 rounded-2xl">
+                            <div class="flex justify-between items-center">
+                                <span id="fc-category" class="px-2.5 py-1 bg-slate-100 text-slate-600 text-[11px] font-semibold rounded-md">Café & Food</span>
+                                <span class="text-xs text-slate-400 font-medium">Tap to flip ⟳</span>
+                            </div>
+                            <div class="text-center space-y-2">
+                                <p class="text-xs font-semibold text-terracotta tracking-wide uppercase" id="fc-gender-plural">der (m) • Pl: die Kaffees</p>
+                                <h3 class="text-3xl font-bold text-slate-900" id="fc-german">der Kaffee</h3>
+                                <button onclick="event.stopPropagation(); playAudio('der Kaffee')" class="inline-flex items-center space-x-1 text-xs text-slate-500 hover:text-terracotta bg-slate-100 hover:bg-terracotta/10 px-3 py-1 rounded-full transition">
+                                    <i class="fa-solid fa-volume-high"></i>
+                                    <span>Pronounce</span>
+                                </button>
+                            </div>
+                            <div class="text-center text-xs text-slate-400">Card <span id="fc-current-idx">1</span> of <span id="fc-total-count">10</span></div>
+                        </div>
+                        <!-- Back -->
+                        <div class="flip-card-back absolute inset-0 w-full h-full flex flex-col justify-between p-6 bg-gradient-to-b from-slate-900 to-slate-800 text-white rounded-2xl">
+                            <div class="flex justify-between items-center text-slate-400">
+                                <span class="text-[11px] font-semibold uppercase tracking-wider text-terracotta">English Translation</span>
+                                <span class="text-xs">Tap to flip ⟳</span>
+                            </div>
+                            <div class="text-center space-y-3">
+                                <h3 class="text-2xl font-bold text-white" id="fc-english">the coffee</h3>
+                                <p class="text-xs text-slate-300 italic bg-slate-800/80 p-3 rounded-xl border border-slate-700" id="fc-example">
+                                    "Ich hätte gern einen Kaffee, bitte."<br>
+                                    <span class="text-slate-400 text-[11px] not-italic">"I would like a coffee, please."</span>
+                                </p>
+                            </div>
+                            <div class="text-center text-xs text-slate-400">Rate your confidence below</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flashcard Action Buttons -->
+            <div class="grid grid-cols-3 gap-3">
+                <button onclick="rateFlashcard('difficult')" class="p-3 bg-red-50 hover:bg-red-100 text-red-700 rounded-xl font-medium text-xs border border-red-200 transition flex flex-col items-center">
+                    <i class="fa-solid fa-triangle-exclamation text-base mb-1"></i>
+                    <span>Difficult</span>
+                </button>
+                <button onclick="rateFlashcard('familiar')" class="p-3 bg-amber-50 hover:bg-amber-100 text-amber-700 rounded-xl font-medium text-xs border border-amber-200 transition flex flex-col items-center">
+                    <i class="fa-solid fa-bookmark text-base mb-1"></i>
+                    <span>Familiar</span>
+                </button>
+                <button onclick="rateFlashcard('mastered')" class="p-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl font-medium text-xs border border-emerald-200 transition flex flex-col items-center">
+                    <i class="fa-solid fa-circle-check text-base mb-1"></i>
+                    <span>Mastered</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- QUIZZES VIEW -->
+        <div id="view-quizzes" class="space-y-6 view-section hidden">
+            <div>
+                <h2 class="text-xl font-bold text-slate-900">Vocabulary & Grammar Quizzes</h2>
+                <p class="text-xs text-slate-500">Test your recall with instant constructive feedback.</p>
+            </div>
+
+            <div id="quiz-container" class="ios-card rounded-2xl p-6 space-y-4">
+                <div class="flex justify-between items-center text-xs font-semibold text-slate-400">
+                    <span id="quiz-progress-label">QUESTION 1 OF 5</span>
+                    <span id="quiz-category-label" class="bg-terracotta/10 text-terracotta px-2 py-0.5 rounded">Grammar A1</span>
+                </div>
+                <h3 id="quiz-question" class="text-lg font-bold text-slate-900">Which article corresponds to the masculine noun "Kaffee"?</h3>
+                
+                <div id="quiz-options" class="space-y-2.5 pt-2">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <div id="quiz-explanation-box" class="hidden mt-4 p-4 rounded-xl text-xs leading-relaxed">
+                    <!-- Explanation text -->
+                </div>
+
+                <div id="quiz-next-container" class="hidden pt-3">
+                    <button onclick="nextQuizQuestion()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-medium py-3 rounded-xl text-sm transition">
+                        Next Question <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- REVISION VIEW -->
+        <div id="view-revision" class="space-y-6 view-section hidden">
+            <div>
+                <h2 class="text-xl font-bold text-slate-900">Spaced Repetition Revision</h2>
+                <p class="text-xs text-slate-500">Targeted review focusing on items you struggled with.</p>
+            </div>
+
+            <div class="ios-card rounded-2xl p-5 bg-gradient-to-r from-slate-900 to-slate-800 text-white flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-base mb-1">Daily Weak-Spot Workout</h3>
+                    <p class="text-xs text-slate-300">8 items ready for intelligent spaced review.</p>
+                </div>
+                <button onclick="startRevisionSession()" class="bg-terracotta hover:bg-terracottaDark text-white px-4 py-2.5 rounded-xl font-medium text-xs shadow transition">
+                    Start Review
+                </button>
+            </div>
+
+            <div class="space-y-3">
+                <h3 class="font-bold text-slate-900 text-sm">Targeted Areas for Improvement</h3>
+                <div id="weak-areas-list" class="space-y-2">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- PROGRESS VIEW -->
+        <div id="view-progress" class="space-y-6 view-section hidden">
+            <div>
+                <h2 class="text-xl font-bold text-slate-900">Learning Progress Dashboard</h2>
+                <p class="text-xs text-slate-500">Comprehensive view of your A0 to A2 German acquisition journey.</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="ios-card p-4 rounded-xl">
+                    <p class="text-xs text-slate-500 font-medium">CEFR Level</p>
+                    <p class="text-xl font-bold text-slate-900 mt-1">A1.2 <span class="text-xs font-normal text-emerald-600">Active</span></p>
+                    <div class="w-full bg-slate-100 h-2 rounded-full mt-3 overflow-hidden">
+                        <div class="bg-terracotta h-full rounded-full" style="width: 45%;"></div>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-1.5">45% through A1 syllabus</p>
+                </div>
+                <div class="ios-card p-4 rounded-xl">
+                    <p class="text-xs text-slate-500 font-medium">Vocabulary Memory</p>
+                    <p class="text-xl font-bold text-slate-900 mt-1">142 Words</p>
+                    <p class="text-[10px] text-emerald-600 mt-2 font-medium"><i class="fa-solid fa-arrow-trend-up mr-1"></i>+18 words this week</p>
+                </div>
+            </div>
+
+            <div class="ios-card rounded-2xl p-5 space-y-4">
+                <h3 class="font-bold text-slate-900 text-sm">Grammar Proficiency Breakdown</h3>
+                <div class="space-y-3 text-xs">
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="font-medium text-slate-700">Nominative & Accusative Articles</span>
+                            <span class="font-bold text-slate-900">85%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-sage h-full rounded-full" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="font-medium text-slate-700">Modal Verbs (möchte, können, wollen)</span>
+                            <span class="font-bold text-slate-900">70%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-terracotta h-full rounded-full" style="width: 70%;"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="font-medium text-slate-700">Verb Conjugation (Regular & Irregular)</span>
+                            <span class="font-bold text-slate-900">92%</span>
+                        </div>
+                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                            <div class="bg-sage h-full rounded-full" style="width: 92%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI ASSISTANT VIEW -->
+        <div id="view-ai" class="flex flex-col h-[72vh] view-section hidden">
+            <div class="mb-3">
+                <h2 class="text-xl font-bold text-slate-900">Gemini Learning Assistant</h2>
+                <p class="text-xs text-slate-500">Ask grammar questions, request vocabulary help, or generate custom practice.</p>
+            </div>
+
+            <div id="chat-messages" class="flex-1 ios-card rounded-2xl p-4 overflow-y-auto space-y-3 mb-3 bg-slate-50/50">
+                <div class="flex items-start space-x-2">
+                    <div class="w-7 h-7 rounded-full bg-terracotta text-white flex items-center justify-center text-xs font-bold flex-shrink-0">G</div>
+                    <div class="bg-white border border-slate-200/80 p-3 rounded-2xl rounded-tl-sm text-xs text-slate-800 max-w-[85%] leading-relaxed shadow-sm">
+                        Hallo! I am your personal Gemini German tutor. How can I assist your learning today? You can ask me to explain grammar rules, give examples, or quiz you!
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <input type="text" id="chat-input" placeholder="Ask e.g., 'When do I use dem vs den?'..." class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-terracotta shadow-sm">
+                <button onclick="sendAiMessage()" class="bg-terracotta hover:bg-terracottaDark text-white px-4 py-3 rounded-xl text-xs font-medium shadow transition active:scale-95 flex items-center justify-center">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- SETTINGS VIEW -->
+        <div id="view-settings" class="space-y-6 view-section hidden">
+            <div>
+                <h2 class="text-xl font-bold text-slate-900">Settings & Sync</h2>
+                <p class="text-xs text-slate-500">Manage offline storage, Google Drive backup, and learning preferences.</p>
+            </div>
+
+            <div class="ios-card rounded-2xl p-5 space-y-4">
+                <h3 class="font-bold text-slate-900 text-sm">Cloud Backup & Synchronization</h3>
+                <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-800">Google Drive Sync</p>
+                        <p class="text-[11px] text-slate-500">Last synced: Today at 02:30 AM</p>
+                    </div>
+                    <button onclick="triggerSync()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3.5 py-2 rounded-xl transition">
+                        <i class="fa-solid fa-cloud-arrow-up mr-1 text-terracotta"></i> Sync Now
+                    </button>
+                </div>
+                <div class="flex items-center justify-between py-2">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-800">Offline-First Mode</p>
+                        <p class="text-[11px] text-slate-500">All lessons stored locally on device</p>
+                    </div>
+                    <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">Active</span>
+                </div>
+            </div>
+
+            <div class="ios-card rounded-2xl p-5 space-y-4">
+                <h3 class="font-bold text-slate-900 text-sm">Learning Preferences</h3>
+                <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-800">Current CEFR Level</p>
+                        <p class="text-[11px] text-slate-500">Target syllabus progression</p>
+                    </div>
+                    <select id="level-select" onchange="changeLevel(this.value)" class="bg-slate-100 text-slate-800 text-xs font-semibold px-3 py-1.5 rounded-xl border border-slate-200 focus:outline-none">
+                        <option value="A0">A0 (Absolute Beginner)</option>
+                        <option value="A1" selected>A1 (Beginner)</option>
+                        <option value="A2">A2 (Elementary)</option>
+                    </select>
+                </div>
+                <div class="flex items-center justify-between py-2">
+                    <div>
+                        <p class="text-xs font-semibold text-slate-800">Daily Reminder</p>
+                        <p class="text-[11px] text-slate-500">Friendly 7-minute daily nudge</p>
+                    </div>
+                    <input type="checkbox" checked class="w-4 h-4 accent-terracotta rounded">
+                </div>
+            </div>
+
+            <div class="text-center pt-2">
+                <button onclick="resetAllData()" class="text-xs text-red-600 hover:underline font-semibold">
+                    Reset Local Learning Progress
+                </button>
+                <p class="text-[10px] text-slate-400 mt-1">German Monano v2.4 • Offline-First iOS Web Architecture</p>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="lesson-modal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] flex flex-col shadow-2xl overflow-hidden border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
+            <!-- Modal Header -->
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div class="flex items-center space-x-2">
+                    <span id="lesson-step-badge" class="px-2.5 py-0.5 rounded-full bg-terracotta/10 text-terracotta text-xs font-semibold">Step 1 of 4</span>
+                    <h3 id="lesson-modal-title" class="font-bold text-slate-900 text-sm">Im Café bestellen</h3>
+                </div>
+                <button onclick="closeLesson()" class="w-8 h-8 rounded-full bg-slate-200/60 text-slate-600 flex items-center justify-center hover:bg-slate-300">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content Body -->
+            <div id="lesson-body" class="p-6 overflow-y-auto flex-1 space-y-6">
+                <!-- Dynamic step content inserted via JS -->
+            </div>
+
+            <!-- Modal Footer Controls -->
+            <div class="p-4 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                <button id="lesson-prev-btn" onclick="prevLessonStep()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 bg-slate-200/60 hover:bg-slate-200 disabled:opacity-40" disabled>
+                    Back
+                </button>
+                <button id="lesson-next-btn" onclick="nextLessonStep()" class="px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-terracotta hover:bg-terracottaDark shadow-sm shadow-terracotta/20">
+                    Continue
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="fixed bottom-0 left-0 right-0 z-40 ios-glass border-t border-slate-200/80 px-2 py-2">
+        <div class="max-w-md mx-auto grid grid-cols-6 gap-1 text-center">
+            <button onclick="switchTab('home')" id="tab-btn-home" class="flex flex-col items-center justify-center py-1 text-terracotta transition">
+                <i class="fa-solid fa-house text-base"></i>
+                <span class="text-[10px] font-semibold mt-1">Home</span>
+            </button>
+            <button onclick="switchTab('flashcards')" id="tab-btn-flashcards" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-700 transition">
+                <i class="fa-solid fa-clone text-base"></i>
+                <span class="text-[10px] font-medium mt-1">Cards</span>
+            </button>
+            <button onclick="switchTab('quizzes')" id="tab-btn-quizzes" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-700 transition">
+                <i class="fa-solid fa-circle-question text-base"></i>
+                <span class="text-[10px] font-medium mt-1">Quiz</span>
+            </button>
+            <button onclick="switchTab('revision')" id="tab-btn-revision" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-700 transition">
+                <i class="fa-solid fa-rotate text-base"></i>
+                <span class="text-[10px] font-medium mt-1">Revision</span>
+            </button>
+            <button onclick="switchTab('progress')" id="tab-btn-progress" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-700 transition">
+                <i class="fa-solid fa-chart-pie text-base"></i>
+                <span class="text-[10px] font-medium mt-1">Progress</span>
+            </button>
+            <button onclick="switchTab('ai')" id="tab-btn-ai" class="flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-700 transition">
+                <i class="fa-solid fa-wand-magic-sparkles text-base"></i>
+                <span class="text-[10px] font-medium mt-1">AI Tutor</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        // Local state initialization & persistence
+        let appState = JSON.parse(localStorage.getItem('german_monano_state')) || {
+            level: 'A1',
+            streak: 5,
+            completedLessonsCount: 12,
+            wordsMasteredCount: 64,
+            accuracy: 88,
+            currentFlashcardIdx: 0,
+            currentQuizIdx: 0,
+            quizScore: 0,
+            lessonStep: 0
+        };
+
+        function saveState() {
+            localStorage.setItem('german_monano_state', JSON.stringify(appState));
+        }
+
+        // Curriculum syllabus dataset
+        const curriculumUnits = [
+            { id: 1, title: "Begrüßung & Kennenlernen", level: "A0", duration: "7 min", status: "completed", desc: "Essential greetings, polite introductions, and basic German pronunciation rules." },
+            { id: 2, title: "Zahlen & Alltagseinkäufe", level: "A0", duration: "7 min", status: "completed", desc: "Counting to 100, asking prices, and simple supermarket shopping phrases." },
+            { id: 3, title: "Im Café bestellen", level: "A1", duration: "7 min", status: "current", desc: "Ordering coffee, pastries, and politely asking for the bill in Berlin." },
+            { id: 4, title: "Nach dem Weg fragen", level: "A1", duration: "7 min", status: "locked", desc: "Navigating streets, turning left/right, and finding central train stations." },
+            { id: 5, title: "Wohnung & Familie", level: "A2", duration: "8 min", status: "locked", desc: "Describing rooms, furniture, and talking about close family members." }
+        ];
+
+        // Flashcards dataset
+        const flashcardsData = [
+            { german: "der Kaffee", genderPlural: "der (m) • Pl: die Kaffees", english: "the coffee", example: "Ich hätte gern einen Kaffee, bitte.", exampleEn: "I would like a coffee, please.", category: "Café & Food" },
+            { german: "die Rechnung", genderPlural: "die (f) • Pl: die Rechnungen", english: "the bill / check", example: "Zusammen oder getrennt? Die Rechnung bitte.", exampleEn: "Together or separate? The bill please.", category: "Café & Food" },
+            { german: "bitte schön", genderPlural: "Phrase", english: "here you are / you're welcome", example: "Ein Kaffee und ein Kuchen. – Danke schön! – Bitte schön.", exampleEn: "A coffee and a cake. – Thank you! – You're welcome.", category: "Polite Phrases" },
+            { german: "der Bahnhof", genderPlural: "der (m) • Pl: die Bahnhöfe", english: "the train station", example: "Entschuldigung, wo ist der Hauptbahnhof?", exampleEn: "Excuse me, where is the central station?", category: "Directions" },
+            { german: "die U-Bahn", genderPlural: "die (f) • Pl: die U-Bahnen", english: "the underground / subway", example: "Nehmen wir die U-Bahn oder den Bus?", exampleEn: "Shall we take the subway or the bus?", category: "Transport" }
+        ];
+
+        // Quizzes dataset
+        const quizzesData = [
+            {
+                question: "Which article corresponds to the masculine noun 'Kaffee' in the nominative case?",
+                category: "Grammar A1",
+                options: [
+                    { text: "das", correct: false, explanation: "'das' is used for neuter nouns (e.g., das Wasser)." },
+                    { text: "die", correct: false, explanation: "'die' is used for feminine nouns (e.g., die Milch) or plurals." },
+                    { text: "der", correct: true, explanation: "Correct! 'Kaffee' is a masculine noun in German, taking 'der'." },
+                    { text: "den", correct: false, explanation: "'den' is the accusative masculine article, but here we need nominative subject." }
+                ]
+            },
+            {
+                question: "How do you politely say 'I would like...' when ordering in a German restaurant?",
+                category: "Conversational A1",
+                options: [
+                    { text: "Ich trinke...", correct: false, explanation: "Means 'I drink...', which is direct but less polite than the subjunctive modal." },
+                    { text: "Ich hätte gern...", correct: true, explanation: "Spot on! 'Ich hätte gern' (I would like) is the standard polite formula for ordering." },
+                    { text: "Ich wollen...", correct: false, explanation: "Grammatically incorrect verb conjugation ('wollen' must conjugate to 'will')." },
+                    { text: "Gib mir...", correct: false, explanation: "Too informal ('Give me...'), inappropriate for service staff." }
+                ]
+            }
+        ];
+
+        // Weak areas dataset
+        const weakAreasData = [
+            { topic: "Accusative masculine articles (den vs. der)", errorRate: "28% error rate", recommendation: "Review direct object pronoun drills." },
+            { topic: "Modal verb positioning in subordinate clauses", errorRate: "22% error rate", recommendation: "Practice sentence structure exercises." }
+        ];
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+
+            // Update bottom nav colors
+            ['home', 'flashcards', 'quizzes', 'revision', 'progress', 'ai', 'settings'].forEach(t => {
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (btn) {
+                    if (t === tabId) {
+                        btn.className = "flex flex-col items-center justify-center py-1 text-terracotta transition";
+                    } else {
+                        btn.className = "flex flex-col items-center justify-center py-1 text-slate-400 hover:text-slate-700 transition";
+                    }
+                }
+            });
+
+            if (tabId === 'flashcards') renderFlashcard();
+            if (tabId === 'quizzes') renderQuiz();
+            if (tabId === 'revision') renderRevision();
+            if (tabId === 'home') renderHomeCurriculum();
+        }
+
+        // Initialize Home Curriculum List
+        function renderHomeCurriculum() {
+            const container = document.getElementById('curriculum-list');
+            container.innerHTML = '';
+            curriculumUnits.forEach(unit => {
+                let badgeClass = unit.status === 'completed' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : (unit.status === 'current' ? 'bg-terracotta/10 text-terracotta border-terracotta/20' : 'bg-slate-100 text-slate-500 border-slate-200');
+                let statusIcon = unit.status === 'completed' ? '<i class="fa-solid fa-check text-emerald-600"></i>' : (unit.status === 'current' ? '<i class="fa-solid fa-play text-terracotta"></i>' : '<i class="fa-solid fa-lock text-slate-400"></i>');
+                
+                container.innerHTML += `
+                    <div class="ios-card p-3.5 rounded-xl flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold border ${badgeClass}">
+                                ${statusIcon}
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-900">${unit.title}</h4>
+                                <p class="text-[10px] text-slate-500">${unit.level} • ${unit.duration}</p>
+                            </div>
+                        </div>
+                        <button onclick="${unit.status !== 'locked' ? 'startDailyLesson()' : 'showLockedNotice()'}" class="text-xs font-semibold px-3 py-1.5 rounded-lg ${unit.status === 'current' ? 'bg-terracotta text-white shadow-sm' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}">
+                            ${unit.status === 'completed' ? 'Review' : (unit.status === 'current' ? 'Start' : 'Locked')}
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function showLockedNotice() {
+            alertMsg("Complete previous lessons to unlock this unit.");
+        }
+
+        function alertMsg(msg) {
+            // Non-blocking custom toast or alert replacement
+            const div = document.createElement('div');
+            div.className = "fixed top-16 left-1/2 transform -translate-x-1/2 z-50 bg-slate-900 text-white px-4 py-2 rounded-xl text-xs shadow-xl animate-in fade-in";
+            div.innerText = msg;
+            document.body.appendChild(div);
+            setTimeout(() => div.remove(), 2500);
+        }
+
+        // Lesson Modal Simulator Flow
+        let lessonStep = 1;
+        function startDailyLesson() {
+            lessonStep = 1;
+            document.getElementById('lesson-modal').classList.remove('hidden');
+            renderLessonStepContent();
+        }
+
+        function closeLesson() {
+            document.getElementById('lesson-modal').classList.add('hidden');
+        }
+
+        function renderLessonStepContent() {
+            const body = document.getElementById('lesson-body');
+            document.getElementById('lesson-step-badge').innerText = `Step ${lessonStep} of 4`;
+            
+            const prevBtn = document.getElementById('lesson-prev-btn');
+            const nextBtn = document.getElementById('lesson-next-btn');
+            prevBtn.disabled = lessonStep === 1;
+
+            if (lessonStep === 1) {
+                body.innerHTML = `
+                    <div class="space-y-4">
+                        <span class="px-2.5 py-1 bg-terracotta/10 text-terracotta text-[11px] font-semibold rounded-md">Dialogue in Context</span>
+                        <h4 class="font-bold text-slate-900 text-base">At the Berlin Café</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">Tap any German word or phrase to inspect grammar & English meaning.</p>
+                        
+                        <div class="space-y-3 bg-slate-50 p-4 rounded-2xl border border-slate-200/80 text-xs">
+                            <div onclick="inspectWord('Guten Tag', 'Good day (formal greeting)')" class="p-2.5 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-terracotta transition flex justify-between items-center">
+                                <div><strong class="text-slate-900">Kellner:</strong> <span class="text-terracotta font-medium">Guten Tag!</span> Was darf es sein?</div>
+                                <span class="text-[10px] text-slate-400">Tap to inspect 🔍</span>
+                            </div>
+                            <div onclick="inspectWord('Ich hätte gern', 'Subjunctive polite request: I would like...') " class="p-2.5 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-terracotta transition flex justify-between items-center">
+                                <div><strong class="text-slate-900">Gast:</strong> <span class="text-terracotta font-medium">Ich hätte gern</span> einen Kaffee und ein Stück Kuchen.</div>
+                                <span class="text-[10px] text-slate-400">Tap to inspect 🔍</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                nextBtn.innerText = "Continue to Vocabulary";
+            } else if (lessonStep === 2) {
+                body.innerHTML = `
+                    <div class="space-y-4">
+                        <span class="px-2.5 py-1 bg-sageLight text-sage text-[11px] font-semibold rounded-md">Vocabulary Breakdown</span>
+                        <h4 class="font-bold text-slate-900 text-base">Key Café Terms</h4>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                <p class="text-[10px] text-slate-400 font-semibold">NOUN (MASCULINE)</p>
+                                <p class="font-bold text-slate-900 text-sm mt-0.5">der Kaffee</p>
+                                <p class="text-xs text-slate-600 mt-1">the coffee</p>
+                            </div>
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                                <p class="text-[10px] text-slate-400 font-semibold">NOUN (NEUTER)</p>
+                                <p class="font-bold text-slate-900 text-sm mt-0.5">das Stück</p>
+                                <p class="text-xs text-slate-600 mt-1">the piece / slice</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                nextBtn.innerText = "Continue to Grammar";
+            } else if (lessonStep === 3) {
+                body.innerHTML = `
+                    <div class="space-y-4">
+                        <span class="px-2.5 py-1 bg-amber-50 text-amber-700 text-[11px] font-semibold rounded-md">Grammar Focus</span>
+                        <h4 class="font-bold text-slate-900 text-base">Polite Requests with 'hätte gern'</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            In German, instead of demanding something directly (e.g. <em>Ich will</em>), native speakers use the subjunctive form <strong>hätte gern</strong> (would like) for polite social interactions.
+                        </p>
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs space-y-1 text-slate-700">
+                            <p>✅ <em>Ich hätte gern einen Kaffee.</em> (Polite & natural)</p>
+                            <p class="text-slate-400">❌ <em>Ich will Kaffee.</em> (Too blunt / demanding)</p>
+                        </div>
+                    </div>
+                `;
+                nextBtn.innerText = "Take Practice Exercise";
+            } else if (lessonStep === 4) {
+                body.innerHTML = `
+                    <div class="space-y-4">
+                        <span class="px-2.5 py-1 bg-terracotta/10 text-terracotta text-[11px] font-semibold rounded-md">Quick Exercise</span>
+                        <h4 class="font-bold text-slate-900 text-base">Complete the Sentence</h4>
+                        <p class="text-xs text-slate-600">Select the correct polite expression to order water:</p>
+                        <p class="text-sm font-semibold text-slate-900 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                            "______ gern ein Glas Wasser, bitte."
+                        </p>
+                        <div class="space-y-2">
+                            <button onclick="checkLessonAnswer(this, true)" class="w-full text-left p-3 rounded-xl border border-slate-200 hover:border-terracotta text-xs font-semibold text-slate-800 transition">
+                                A) Ich hätte gern
+                            </button>
+                            <button onclick="checkLessonAnswer(this, false)" class="w-full text-left p-3 rounded-xl border border-slate-200 hover:border-terracotta text-xs font-semibold text-slate-800 transition">
+                                B) Ich habe
+                            </button>
+                        </div>
+                        <div id="exercise-feedback" class="hidden p-3 rounded-xl text-xs font-medium"></div>
+                    </div>
+                `;
+                nextBtn.innerText = "Finish Lesson";
+            }
+        }
+
+        function inspectWord(word, meaning) {
+            alertMsg(`💡 ${word}: ${meaning}`);
+        }
+
+        function checkLessonAnswer(btn, isCorrect) {
+            const feedback = document.getElementById('exercise-feedback');
+            feedback.classList.remove('hidden');
+            if (isCorrect) {
+                btn.className = "w-full text-left p-3 rounded-xl border border-emerald-500 bg-emerald-50 text-emerald-900 text-xs font-semibold";
+                feedback.className = "p-3 rounded-xl text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200";
+                feedback.innerHTML = "✨ Excellent! 'Ich hätte gern' is the correct polite phrasing.";
+            } else {
+                btn.className = "w-full text-left p-3 rounded-xl border border-red-500 bg-red-50 text-red-900 text-xs font-semibold";
+                feedback.className = "p-3 rounded-xl text-xs font-medium bg-red-50 text-red-800 border border-red-200";
+                feedback.innerHTML = "⚠️ Not quite. Remember we use 'hätte gern' for polite requests in German cafes.";
+            }
+        }
+
+        function nextLessonStep() {
+            if (lessonStep < 4) {
+                lessonStep++;
+                renderLessonStepContent();
+            } else {
+                appState.completedLessonsCount++;
+                saveState();
+                closeLesson();
+                alertMsg("🎉 Daily Lesson Completed Successfully!");
+                renderHomeCurriculum();
+            }
+        }
+
+        function prevLessonStep() {
+            if (lessonStep > 1) {
+                lessonStep--;
+                renderLessonStepContent();
+            }
+        }
+
+        // Flashcards Logic
+        function renderFlashcard() {
+            const card = flashcardsData[appState.currentFlashcardIdx];
+            document.getElementById('fc-german').innerText = card.german;
+            document.getElementById('fc-gender-plural').innerText = card.genderPlural;
+            document.getElementById('fc-english').innerText = card.english;
+            document.getElementById('fc-example').innerHTML = `"${card.example}"<br><span class="text-slate-400 text-[11px] not-italic">"${card.exampleEn}"</span>`;
+            document.getElementById('fc-category').innerText = card.category;
+            document.getElementById('fc-current-idx').innerText = appState.currentFlashcardIdx + 1;
+            document.getElementById('fc-total-count').innerText = flashcardsData.length;
+            document.getElementById('flashcard-element').classList.remove('flipped');
+        }
+
+        function toggleCardFlip() {
+            document.getElementById('flashcard-element').classList.toggle('flipped');
+        }
+
+        function rateFlashcard(rating) {
+            if (rating === 'mastered') {
+                appState.wordsMasteredCount++;
+            }
+            appState.currentFlashcardIdx = (appState.currentFlashcardIdx + 1) % flashcardsData.length;
+            saveState();
+            renderFlashcard();
+            alertMsg(`Card marked as ${rating}!`);
+        }
+
+        function resetFlashcards() {
+            appState.currentFlashcardIdx = 0;
+            renderFlashcard();
+            alertMsg("Flashcard stack reset to start.");
+        }
+
+        function playAudio(term) {
+            alertMsg(`🔊 Audio pronunciation simulation for: "${term}"`);
+        }
+
+        // Quizzes Logic
+        function renderQuiz() {
+            const quiz = quizzesData[appState.currentQuizIdx];
+            document.getElementById('quiz-progress-label').innerText = `QUESTION ${appState.currentQuizIdx + 1} OF ${quizzesData.length}`;
+            document.getElementById('quiz-category-label').innerText = quiz.category;
+            document.getElementById('quiz-question').innerText = quiz.question;
+            
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+            quiz.options.forEach((opt, idx) => {
+                optionsContainer.innerHTML += `
+                    <button onclick="selectQuizOption(${idx})" class="quiz-opt-btn w-full text-left p-3.5 rounded-xl border border-slate-200 hover:border-terracotta text-xs font-semibold text-slate-800 transition bg-white">
+                        ${opt.text}
+                    </button>
+                `;
+            });
+            document.getElementById('quiz-explanation-box').classList.add('hidden');
+            document.getElementById('quiz-next-container').classList.add('hidden');
+        }
+
+        function selectQuizOption(idx) {
+            const quiz = quizzesData[appState.currentQuizIdx];
+            const optButtons = document.querySelectorAll('.quiz-opt-btn');
+            
+            optButtons.forEach((btn, i) => {
+                btn.disabled = true;
+                if (quiz.options[i].correct) {
+                    btn.className = "w-full text-left p-3.5 rounded-xl border border-emerald-500 bg-emerald-50 text-emerald-900 text-xs font-semibold";
+                } else if (i === idx) {
+                    btn.className = "w-full text-left p-3.5 rounded-xl border border-red-500 bg-red-50 text-red-900 text-xs font-semibold";
+                }
+            });
+
+            const explanationBox = document.getElementById('quiz-explanation-box');
+            explanationBox.classList.remove('hidden');
+            if (quiz.options[idx].correct) {
+                explanationBox.className = "mt-4 p-4 rounded-xl text-xs leading-relaxed bg-emerald-50 text-emerald-800 border border-emerald-200";
+                explanationBox.innerHTML = `<strong>✨ Correct!</strong> ${quiz.options[idx].explanation}`;
+                appState.quizScore++;
+            } else {
+                explanationBox.className = "mt-4 p-4 rounded-xl text-xs leading-relaxed bg-amber-50 text-amber-800 border border-amber-200";
+                explanationBox.innerHTML = `<strong>💡 Explanation:</strong> ${quiz.options[idx].explanation}`;
+            }
+            document.getElementById('quiz-next-container').classList.remove('hidden');
+            saveState();
+        }
+
+        function nextQuizQuestion() {
+            appState.currentQuizIdx = (appState.currentQuizIdx + 1) % quizzesData.length;
+            renderQuiz();
+        }
+
+        // Revision Logic
+        function renderRevision() {
+            const list = document.getElementById('weak-areas-list');
+            list.innerHTML = '';
+            weakAreasData.forEach(item => {
+                list.innerHTML += `
+                    <div class="ios-card p-4 rounded-xl flex items-center justify-between">
+                        <div>
+                            <h4 class="font-bold text-slate-900 text-xs">${item.topic}</h4>
+                            <p class="text-[11px] text-terracotta font-medium mt-0.5">${item.errorRate} • ${item.recommendation}</p>
+                        </div>
+                        <button onclick="alertMsg('Starting focused review session...')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-lg">
+                            Review
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function startRevisionSession() {
+            alertMsg("🚀 Starting Spaced Repetition Targeted Workout!");
+        }
+
+        // AI Chat Logic
+        function sendAiMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML += `
+                <div class="flex items-start justify-end space-x-2">
+                    <div class="bg-terracotta text-white p-3 rounded-2xl rounded-tr-sm text-xs max-w-[85%] leading-relaxed shadow-sm">
+                        ${text}
+                    </div>
+                </div>
+            `;
+            input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Simulated Gemini Intelligent AI Response
+            setTimeout(() => {
+                let aiReply = "That's a great grammar question! In German, cases (Nominative, Accusative, Dative) change articles based on whether the noun is the subject or object.";
+                if (text.toLowerCase().includes('dem') || text.toLowerCase().includes('den')) {
+                    aiReply = "'den' is used for masculine accusative direct objects (e.g., 'Ich sehe den Hund'). 'dem' is used for masculine or neuter dative indirect objects (e.g., 'Ich helfe dem Mann').";
+                } else if (text.toLowerCase().includes('hello') || text.toLowerCase().includes('hallo')) {
+                    aiReply = "Hallo! Wie kann ich dir heute beim Deutschlernen helfen?";
+                }
+
+                chatMessages.innerHTML += `
+                    <div class="flex items-start space-x-2">
+                        <div class="w-7 h-7 rounded-full bg-terracotta text-white flex items-center justify-center text-xs font-bold flex-shrink-0">G</div>
+                        <div class="bg-white border border-slate-200/80 p-3 rounded-2xl rounded-tl-sm text-xs text-slate-800 max-w-[85%] leading-relaxed shadow-sm">
+                            ${aiReply}
+                        </div>
+                    </div>
+                `;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 800);
+        }
+
+        // Settings & Sync Logic
+        function triggerSync() {
+            const statusEl = document.getElementById('sync-status-text');
+            statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i>Syncing...';
+            setTimeout(() => {
+                statusEl.innerHTML = '<i class="fa-solid fa-cloud-arrow-up mr-1"></i>Synced';
+                alertMsg("☁️ Successfully synchronized with Google Drive backup.");
+            }, 1200);
+        }
+
+        function changeLevel(level) {
+            appState.level = level;
+            saveState();
+            document.getElementById('current-level-badge').innerText = `${level} Beginner`;
+            alertMsg(`Level updated to ${level}. Curriculum adapted.`);
+        }
+
+        function resetAllData() {
+            if (confirm("Reset all local learning progress?")) {
+                localStorage.removeItem('german_monano_state');
+                location.reload();
+            }
+        }
+
+        function openStreakModal() {
+            alertMsg("🔥 Streak: 5 consecutive days of 7-minute daily learning cards!");
+        }
+
+        // On window load initialization
+        window.onload = function() {
+            document.getElementById('stat-completed-lessons').innerText = appState.completedLessonsCount;
+            document.getElementById('stat-words-mastered').innerText = appState.wordsMasteredCount;
+            document.getElementById('stat-accuracy').innerText = `${appState.accuracy}%`;
+            document.getElementById('header-streak-count').innerText = `${appState.streak} Days`;
+            document.getElementById('level-select').value = appState.level;
+            document.getElementById('current-level-badge').innerText = `${appState.level} Beginner`;
+            renderHomeCurriculum();
+        };
+    </script>
+</body>
+</html>
